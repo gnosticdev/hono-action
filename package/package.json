@@ -16,13 +16,13 @@
     "typescript": "^5.9.2"
   },
   "exports": {
-    "./actions": {
-      "default": "./dist/actions.js",
-      "types": "./dist/actions.d.ts"
-    },
     ".": {
       "default": "./dist/integration.js",
       "types": "./dist/integration.d.ts"
+    },
+    "./actions": {
+      "default": "./dist/actions.js",
+      "types": "./dist/actions.d.ts"
     }
   },
   "files": [
@@ -46,7 +46,8 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
   },
   "sideEffects": false,
   "type": "module",
