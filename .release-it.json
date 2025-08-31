@@ -10,9 +10,7 @@
   },
   "github": false,
   "hooks": {
-    "before:init": [
-      "bun run --cwd package build"
-    ]
+    "before:init": ["bun run --cwd package build"]
   },
   "npm": {
     "access": "public",
