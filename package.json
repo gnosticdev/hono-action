@@ -10,25 +10,13 @@
   "name": "root",
   "packageManager": "bun@1.2.21",
   "private": true,
-  "release-it": {
-    "git": {
-      "requireCleanWorkingDir": false
-    },
-    "github": {
-      "release": true,
-      "releaseName": "v${version}"
-    },
-    "npm": {
-      "publish": false
-    }
-  },
   "scripts": {
     "lint": "biome check .",
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "npm run release --workspaces && release-it",
+    "release": "cd package && npm run release",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "0.0.0",
