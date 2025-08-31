@@ -11,7 +11,7 @@ export { HonoActionError } from './error.js'
 
 // biome-ignore lint/suspicious/noEmptyInterface: added by user
 export interface Bindings {
-  /** Cloudflare Bindings */
+    /** Cloudflare Bindings */
 }
 
 /**
@@ -20,42 +20,42 @@ export interface Bindings {
  * We are using `HonoEnv` to avoid confusion with the Cloudflare types on `Env` -> which cooresponds to `Bindings`
  */
 export interface HonoEnv {
-  Bindings: Bindings
-  Variables: Record<string, unknown>
+    Bindings: Bindings
+    Variables: Record<string, unknown>
 }
 
 type HonoActionSchema =
-  | v.ObjectSchema<v.ObjectEntries, v.ErrorMessage<v.ObjectIssue> | undefined>
-  | v.NeverSchema<undefined>
+    | v.ObjectSchema<v.ObjectEntries, v.ErrorMessage<v.ObjectIssue> | undefined>
+    | v.NeverSchema<undefined>
 
 interface HonoActionContext<
-  TEnv extends HonoEnv,
-  TPath extends string,
-  TSchema extends HonoActionSchema,
+    TEnv extends HonoEnv,
+    TPath extends string,
+    TSchema extends HonoActionSchema,
 > extends Context<
-    TEnv,
-    TPath,
-    {
-      input: v.InferInput<TSchema>
-      output: v.InferOutput<TSchema>
-      outputFormat: 'json'
-    }
-  > {
-  env: TEnv['Bindings']
+        TEnv,
+        TPath,
+        {
+            input: v.InferInput<TSchema>
+            output: v.InferOutput<TSchema>
+            outputFormat: 'json'
+        }
+    > {
+    env: TEnv['Bindings']
 }
 
 type HonoActionParams<
-  TPath extends string,
-  TSchema extends HonoActionSchema,
-  TReturn,
-  TEnv extends HonoEnv = HonoEnv,
+    TPath extends string,
+    TSchema extends HonoActionSchema,
+    TReturn,
+    TEnv extends HonoEnv = HonoEnv,
 > = {
-  path: TPath
-  schema?: TSchema
-  handler: (
-    params: v.InferOutput<TSchema>,
-    context: HonoActionContext<TEnv, TPath, TSchema>,
-  ) => Promise<TReturn>
+    path: TPath
+    schema?: TSchema
+    handler: (
+        params: v.InferOutput<TSchema>,
+        context: HonoActionContext<TEnv, TPath, TSchema>,
+    ) => Promise<TReturn>
 }
 
 /**
@@ -68,76 +68,76 @@ type HonoActionParams<
  * @returns A Hono app instance with the defined route
  */
 export function defineHonoAction<
-  TPath extends string,
-  TSchema extends HonoActionSchema,
-  TReturn,
-  TEnv extends HonoEnv = HonoEnv,
+    TPath extends string,
+    TSchema extends HonoActionSchema,
+    TReturn,
+    TEnv extends HonoEnv = HonoEnv,
 >({ path, schema, handler }: HonoActionParams<TPath, TSchema, TReturn, TEnv>) {
-  const factory = createFactory<TEnv, TPath>()
-  const app = factory.createApp()
+    const factory = createFactory<TEnv, TPath>()
+    const app = factory.createApp()
 
-  const route = app.post(
-    path,
-    vValidator(
-      'json',
-      schema ?? v.union([v.never(), v.object({})]),
-      async (result, c) => {
-        if (!result.success) {
-          console.error(result.issues)
-          return c.json(
-            {
-              data: null,
-              error: new HonoActionError({
-                message: result.issues[0].message,
-                code: 'INPUT_VALIDATION_ERROR',
-                issue: result.issues[0],
-              }),
+    const route = app.post(
+        path,
+        vValidator(
+            'json',
+            schema ?? v.union([v.never(), v.object({})]),
+            async (result, c) => {
+                if (!result.success) {
+                    console.error(result.issues)
+                    return c.json(
+                        {
+                            data: null,
+                            error: new HonoActionError({
+                                message: result.issues[0].message,
+                                code: 'INPUT_VALIDATION_ERROR',
+                                issue: result.issues[0],
+                            }),
+                        },
+                        400,
+                    )
+                }
             },
-            400,
-          )
-        }
-      },
-    ),
-    async (c) => {
-      try {
-        const json = c.req.valid('json')
+        ),
+        async (c) => {
+            try {
+                const json = c.req.valid('json')
 
-        // context is validated after the middleware, but we only need the original definition to be passed back in to the handler here.
-        const result = await handler(
-          json,
-          c as unknown as HonoActionContext<TEnv, TPath, TSchema>,
-        )
+                // context is validated after the middleware, but we only need the original definition to be passed back in to the handler here.
+                const result = await handler(
+                    json,
+                    c as unknown as HonoActionContext<TEnv, TPath, TSchema>,
+                )
 
-        return c.json(
-          {
-            data: result,
-            error: null,
-          },
-          200,
-        )
-      } catch (error) {
-        console.error(error)
-        let errorMessage = 'Internal server error'
-        let errorCode = 'INTERNAL_SERVER_ERROR'
+                return c.json(
+                    {
+                        data: result,
+                        error: null,
+                    },
+                    200,
+                )
+            } catch (error) {
+                console.error(error)
+                let errorMessage = 'Internal server error'
+                let errorCode = 'INTERNAL_SERVER_ERROR'
 
-        if (error instanceof HonoActionError) {
-          errorMessage = error.message
-          errorCode = error.code
-        }
+                if (error instanceof HonoActionError) {
+                    errorMessage = error.message
+                    errorCode = error.code
+                }
 
-        return c.json(
-          {
-            data: null,
-            error: {
-              message: errorMessage,
-              code: errorCode,
-            },
-          },
-          500,
-        )
-      }
-    },
-  )
+                return c.json(
+                    {
+                        data: null,
+                        error: {
+                            message: errorMessage,
+                            code: errorCode,
+                        },
+                    },
+                    500,
+                )
+            }
+        },
+    )
 
-  return route
+    return route
 }

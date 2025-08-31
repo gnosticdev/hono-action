@@ -1,0 +1,181 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "off"
+      }
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "files": {
+    "includes": [
+      "**",
+      "!node_modules",
+      "!**/*/dist",
+      "!wrangler.json",
+      "!astro.config.ts",
+      "!vscode",
+      "!**/.astro",
+      "!**/*.astro",
+      "!**/cloudflare.d.ts",
+      "!pages-cms",
+      "!**/package.json",
+      "!from-wp",
+      "**/*.tsx",
+      "**/*.ts",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.jsonc",
+      "!**/*.css",
+      "!**/*.md"
+    ]
+  },
+  "formatter": {
+    "attributePosition": "multiline",
+    "enabled": true,
+    "formatWithErrors": true,
+    "indentStyle": "space",
+    "indentWidth": 4,
+    "lineWidth": 80
+  },
+  "javascript": {
+    "assist": {
+      "enabled": true
+    },
+    "formatter": {
+      "jsxQuoteStyle": "single",
+      "quoteStyle": "single",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all"
+    },
+    "globals": ["Astro"]
+  },
+  "json": {
+    "assist": {
+      "enabled": true
+    },
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineWidth": 80
+    },
+    "parser": {
+      "allowComments": true,
+      "allowTrailingCommas": false
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "a11y": {
+        "useKeyWithClickEvents": "off",
+        "useMediaCaption": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": {
+          "fix": "none",
+          "level": "on",
+          "options": {
+            "ignoreRestSiblings": true
+          }
+        },
+        "useJsxKeyInIterable": "off"
+      },
+      "nursery": {
+        "noFloatingPromises": "error",
+        "recommended": true,
+        "useSortedClasses": "warn"
+      },
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "assist": {
+        "actions": {
+          "recommended": false,
+          "source": {
+            "recommended": false
+          }
+        }
+      },
+      "formatter": {
+        "enabled": false
+      },
+      "includes": ["/package/package.json"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["src/**/*.d.ts"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["./**/*.js"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "formatter": {
+        "enabled": false
+      },
+      "includes": ["./**/*.astro"],
+      "linter": {
+        "enabled": true,
+        "rules": {
+          "recommended": true,
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "formatter": {
+        "enabled": false
+      },
+      "includes": ["src/components/ui/**/*.tsx"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    // TSX files follow same rules as .astro
+    {
+      "formatter": {
+        "attributePosition": "multiline",
+        "enabled": true,
+        "formatWithErrors": true,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineWidth": 120
+      },
+      "includes": ["./**/*.tsx"]
+    }
+  ],
+  "vcs": {
+    "clientKind": "git",
+    "defaultBranch": "main",
+    "enabled": true,
+    "useIgnoreFile": true
+  }
+}

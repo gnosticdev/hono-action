@@ -1,0 +1,16 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
+  "extends": "//",
+  "files": {
+    "includes": ["!**/package.json", "!**/dist"]
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
+    }
+  },
+  "linter": {
+    "enabled": false
+  },
+  "root": false
+}

@@ -10,7 +10,7 @@
     "moduleResolution": "bundler",
     "noUncheckedIndexedAccess": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "resolveJsonModule": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,6 +18,5 @@
     "target": "ES2022",
     "verbatimModuleSyntax": true
   },
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*"]
+  "exclude": ["node_modules", "dist"]
 }

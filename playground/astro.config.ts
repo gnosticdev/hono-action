@@ -1,19 +1,23 @@
+import cloudflare from '@astrojs/cloudflare'
 import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'astro/config'
 import { createResolver } from 'astro-integration-kit'
 import { hmrIntegration } from 'astro-integration-kit/dev'
+import { defineConfig } from 'astro/config'
 
-const { default: packageName } = await import('package-name')
+const { default: honoActions } = await import('@gnosticdev/hono-actions')
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    packageName(),
-    hmrIntegration({
-      directory: createResolver(import.meta.url).resolve('../package/dist'),
-    }),
-  ],
-  vite: {
-    plugins: [tailwindcss()],
-  },
+    integrations: [
+        honoActions(),
+        hmrIntegration({
+            directory: createResolver(import.meta.url).resolve(
+                '../package/dist',
+            ),
+        }),
+    ],
+    adapter: cloudflare(),
+    vite: {
+        plugins: [tailwindcss()],
+    },
 })

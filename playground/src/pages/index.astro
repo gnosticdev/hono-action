@@ -1,6 +1,20 @@
 ---
 import Card from '../components/Card.astro'
 import Layout from '../layouts/Layout.astro'
+
+import { honoClient } from '@gnosticdev/hono-actions/client'
+
+const res = await honoClient.api.myAction.$post({
+    json: {
+        name: 'John'
+    }
+})
+
+if (!res.ok) {
+    throw new Error(await res.text())
+}
+
+const { data } = await res.json()
 ---
 
 <Layout title='Welcome to Astro.'>
@@ -33,7 +47,7 @@ import Layout from '../layouts/Layout.astro'
                 </linearGradient>
             </defs>
         </svg>
-        <h1>Welcome to <span class='text-gradient'>Astro</span></h1>
+        <h1>Welcome {data.message}!</h1>
         <p class='instructions'>
             To get started, open the directory <code>src/pages</code> in your project.<br
             />

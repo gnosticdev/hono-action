@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": ["./.astro/types.d.ts"]
   },
-  "exclude": ["dist"],
-  "extends": "astro/tsconfigs/strict"
+  "exclude": ["dist", "../node_modules"],
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src/**/*", "./.astro", "./astro.config.ts", "./package.json"]
 }
