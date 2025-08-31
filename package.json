@@ -21,7 +21,7 @@
     "release:patch": "bun --cwd package release-it patch",
     "typecheck": "bun --cwd package typecheck"
   },
-  "version": "1.0.6",
+  "version": "0.0.0",
   "workspaces": {
     "packages": [
       "package",
