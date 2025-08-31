@@ -11,6 +11,7 @@ export default defineConfig({
   clean: true,
   bundle: true, // Bundle all dependencies except externals
   splitting: false,
+  removeNodeProtocol: false,
   sourcemap: false,
   target: 'es2022',
   minify: false,

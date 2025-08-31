@@ -14,12 +14,12 @@
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
-    "typecheck": "bun --cwd package typecheck",
     "publish": "bun run release",
-    "release": "release-it",
-    "release:major": "release-it major",
-    "release:minor": "release-it minor",
-    "release:patch": "release-it patch"
+    "release": "bun --cwd package release-it",
+    "release:major": "bun --cwd package release-it major",
+    "release:minor": "bun --cwd package release-it minor",
+    "release:patch": "bun --cwd package release-it patch",
+    "typecheck": "bun --cwd package typecheck"
   },
   "version": "1.0.6",
   "workspaces": {
