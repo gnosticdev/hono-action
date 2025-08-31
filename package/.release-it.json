@@ -14,14 +14,12 @@
   },
   "hooks": {
     "after:bump": "echo 'Version bumped to ${version}'",
-    "after:release": "echo 'Released ${name}@${version}'",
-    "before:init": ["bun run typecheck", "bun run build"]
+    "after:release": "npm publish ../../temp-pkg/@gnosticdev-hono-actions-${version}.tgz && rm -rf ../../temp-pkg && echo 'Released ${name}@${version}'",
+    "before:init": ["bun run typecheck", "bun run build"],
+    "after:git:tag": "mkdir -p ../../temp-pkg && npm pack --pack-destination=../../temp-pkg"
   },
   "npm": {
-    "access": "public",
-    "publish": true,
-    "publishArgs": ["--workspaces=false", "--include-workspace-root=false"],
-    "publishPath": "."
+    "publish": false
   },
   "plugins": {}
 }
