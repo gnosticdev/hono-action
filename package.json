@@ -11,18 +11,23 @@
   "packageManager": "bun@1.2.21",
   "private": true,
   "scripts": {
-    "changeset": "changeset",
-    "ci:publish": "bun changeset publish && git push --follow-tags",
-    "ci:version": "bun changeset version && bun install",
     "lint": "biome check .",
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
-    "playground:dev": "bun run --cwd playground dev"
+    "playground:dev": "bun run --cwd playground dev",
+    "publish": "bun run release",
+    "release": "release-it",
+    "release:major": "release-it major",
+    "release:minor": "release-it minor",
+    "release:patch": "release-it patch"
   },
   "workspaces": {
     "packages": [
       "package",
       "playground"
     ]
+  },
+  "dependencies": {
+    "release-it": "^19.0.4"
   }
 }
