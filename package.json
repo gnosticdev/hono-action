@@ -30,7 +30,7 @@
     "release": "release-it",
     "typecheck": "bun --cwd package typecheck"
   },
-  "version": "1.0.7",
+  "version": "0.0.0",
   "workspaces": {
     "packages": [
       "package",
