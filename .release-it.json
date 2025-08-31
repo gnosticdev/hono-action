@@ -19,5 +19,10 @@
     "access": "public",
     "publish": true,
     "publishPath": "./package"
+  },
+  "plugins": {
+    "@release-it/bumper": {
+      "in": "./package/package.json"
+    }
   }
 }

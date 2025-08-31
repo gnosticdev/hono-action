@@ -27,7 +27,7 @@
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "cd package && npm run release",
+    "release": "release-it",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "0.0.0",
