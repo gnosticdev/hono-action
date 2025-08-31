@@ -18,6 +18,7 @@
     "build": "astro check && astro build",
     "dev": "astro dev",
     "preview": "astro preview",
+    "release": "echo 'Playground is not published'",
     "start": "astro dev"
   },
   "type": "module",

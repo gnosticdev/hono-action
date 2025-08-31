@@ -18,12 +18,12 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/integration.d.ts",
-      "default": "./dist/integration.js"
+      "default": "./dist/integration.js",
+      "types": "./dist/integration.d.ts"
     },
     "./actions": {
-      "types": "./dist/actions.d.ts",
-      "default": "./dist/actions.js"
+      "default": "./dist/actions.js",
+      "types": "./dist/actions.d.ts"
     }
   },
   "files": [
@@ -49,9 +49,6 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "release": "release-it",
-    "release:major": "release-it major",
-    "release:minor": "release-it minor",
-    "release:patch": "release-it patch",
     "typecheck": "tsc --noEmit"
   },
   "sideEffects": false,

@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
+    "@release-it/bumper": "^7.0.5",
     "release-it": "^19.0.4"
   },
   "engines": {
@@ -9,16 +10,25 @@
   "name": "root",
   "packageManager": "bun@1.2.21",
   "private": true,
+  "release-it": {
+    "git": {
+      "requireCleanWorkingDir": false
+    },
+    "github": {
+      "release": true,
+      "releaseName": "v${version}"
+    },
+    "npm": {
+      "publish": false
+    }
+  },
   "scripts": {
     "lint": "biome check .",
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "bun --cwd package release-it",
-    "release:major": "bun --cwd package release-it major",
-    "release:minor": "bun --cwd package release-it minor",
-    "release:patch": "bun --cwd package release-it patch",
+    "release": "npm run release --workspaces && release-it",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "0.0.0",

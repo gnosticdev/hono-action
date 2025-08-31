@@ -1,25 +1,10 @@
 {
-  "git": {
-    "addUntrackedFiles": false,
-    "commit": true,
-    "commitMessage": "chore: release v${version}",
-    "push": true,
-    "tag": true,
-    "tagName": "v${version}"
-  },
-  "github": {
-    "autoGenerate": true,
-    "release": false,
-    "releaseName": "v${version}"
-  },
+  "git": false,
   "hooks": {
-    "after:bump": "echo 'Version bumped to ${version}'",
-    "after:release": "npm publish ../../temp-pkg/@gnosticdev-hono-actions-${version}.tgz && rm -rf ../../temp-pkg && echo 'Released ${name}@${version}'",
-    "before:init": ["bun run typecheck", "bun run build"],
-    "after:git:tag": "mkdir -p ../../temp-pkg && npm pack --pack-destination=../../temp-pkg"
+    "before:init": ["bun run typecheck", "bun run build"]
   },
   "npm": {
-    "publish": false
-  },
-  "plugins": {}
+    "access": "public",
+    "publish": true
+  }
 }
