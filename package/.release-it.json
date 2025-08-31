@@ -1,17 +1,14 @@
 {
+  "$schema": "../node_modules/release-it/schema/release-it.json",
   "git": {
-    "commitMessage": "chore: release v${version}",
-    "tagName": "v${version}",
     "addUntrackedFiles": false,
     "commit": true,
+    "commitMessage": "chore: release v${version}",
+    "push": true,
     "tag": true,
-    "push": true
+    "tagName": "v${version}"
   },
-  "github": {
-    "release": true,
-    "releaseName": "v${version}",
-    "autoGenerate": true
-  },
+  "github": false,
   "hooks": {
     "before:init": ["bun run typecheck", "bun run build"]
   },
