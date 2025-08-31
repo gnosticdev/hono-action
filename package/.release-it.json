@@ -1,0 +1,26 @@
+{
+  "git": {
+    "addUntrackedFiles": false,
+    "commit": true,
+    "commitMessage": "chore: release v${version}",
+    "push": true,
+    "tag": true,
+    "tagName": "v${version}"
+  },
+  "github": {
+    "autoGenerate": true,
+    "release": true,
+    "releaseName": "v${version}"
+  },
+  "hooks": {
+    "after:bump": "echo 'Version bumped to ${version}'",
+    "after:release": "echo 'Released ${name}@${version}'",
+    "before:init": ["bun run typecheck", "bun run build"]
+  },
+  "npm": {
+    "access": "public",
+    "publish": true,
+    "publishPath": "."
+  },
+  "plugins": {}
+}

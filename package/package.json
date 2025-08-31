@@ -12,6 +12,7 @@
   },
   "description": "Define server actions with built-in validation, error handling, and a pre-built hono client for calling the routes.",
   "devDependencies": {
+    "release-it": "^19.0.4",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"
   },
@@ -47,9 +48,13 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
+    "release": "release-it",
+    "release:major": "release-it major",
+    "release:minor": "release-it minor",
+    "release:patch": "release-it patch",
     "typecheck": "tsc --noEmit"
   },
   "sideEffects": false,
   "type": "module",
-  "version": "0.0.0"
+  "version": "1.0.5"
 }
