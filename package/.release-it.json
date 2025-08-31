@@ -1,5 +1,17 @@
 {
-  "git": false,
+  "git": {
+    "commitMessage": "chore: release v${version}",
+    "tagName": "v${version}",
+    "addUntrackedFiles": false,
+    "commit": true,
+    "tag": true,
+    "push": true
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}",
+    "autoGenerate": true
+  },
   "hooks": {
     "before:init": ["bun run typecheck", "bun run build"]
   },
