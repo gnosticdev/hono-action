@@ -21,7 +21,7 @@
     "release:minor": "release-it minor",
     "release:patch": "release-it patch"
   },
-  "version": "1.0.5",
+  "version": "1.0.6",
   "workspaces": {
     "packages": [
       "package",
