@@ -9,7 +9,7 @@
   },
   "github": {
     "autoGenerate": true,
-    "release": true,
+    "release": false,
     "releaseName": "v${version}"
   },
   "hooks": {
@@ -20,6 +20,7 @@
   "npm": {
     "access": "public",
     "publish": true,
+    "publishArgs": ["--workspaces=false", "--include-workspace-root=false"],
     "publishPath": "."
   },
   "plugins": {}
