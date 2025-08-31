@@ -1,0 +1,26 @@
+# mac
+.DS_STORE
+Thumbs.db
+
+########################
+# Typescript
+########################
+# Dependency directories
+node_modules
+# TypeScript cache
+*.tsbuildinfo
+
+# build outputs
+.next
+out
+dist
+.astro
+.wrangler
+
+# environment vars
+*.env*
+!.env.example
+
+# cloudflare env vars
+.dev.vars
+

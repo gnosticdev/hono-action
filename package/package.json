@@ -1,0 +1,54 @@
+{
+  "author": {
+    "email": "nynxaconsulting@gmail.com",
+    "name": "gnosticdev",
+    "url": "https://github.com/gnosticdev"
+  },
+  "dependencies": {
+    "@hono/valibot-validator": "^0.5.3",
+    "astro-integration-kit": "^0.19.0",
+    "hono": "^4.9.5",
+    "valibot": "^1.1.0"
+  },
+  "description": "Define server actions with built-in validation, error handling, and a pre-built hono client for calling the routes.",
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2"
+  },
+  "exports": {
+    "./actions": {
+      "default": "./dist/actions.js",
+      "types": "./dist/actions.d.ts"
+    },
+    ".": {
+      "default": "./dist/integration.js",
+      "types": "./dist/integration.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/gnosticdev/hono-actions",
+  "keywords": [
+    "astro-integration",
+    "astro-component",
+    "withastro",
+    "astro",
+    "hono-actions"
+  ],
+  "license": "MIT",
+  "name": "@gnosticdev/hono-actions",
+  "peerDependencies": {
+    "astro": "^5.1.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "version": "0.0.0"
+}
