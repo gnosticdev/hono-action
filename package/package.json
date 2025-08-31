@@ -18,12 +18,12 @@
   },
   "exports": {
     ".": {
-      "default": "./dist/integration.js",
-      "types": "./dist/integration.d.ts"
+      "types": "./dist/integration.d.ts",
+      "default": "./dist/integration.js"
     },
     "./actions": {
-      "default": "./dist/actions.js",
-      "types": "./dist/actions.d.ts"
+      "types": "./dist/actions.d.ts",
+      "default": "./dist/actions.js"
     }
   },
   "files": [
@@ -56,5 +56,5 @@
   },
   "sideEffects": false,
   "type": "module",
-  "version": "1.0.5"
+  "version": "1.0.6"
 }
