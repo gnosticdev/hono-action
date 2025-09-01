@@ -27,7 +27,7 @@
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "npm release --workspaces",
+    "release": "bun run --cwd package release",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "1.0.7",
