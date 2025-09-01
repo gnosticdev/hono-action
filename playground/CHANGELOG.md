@@ -1,5 +1,12 @@
 # playground
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @gnosticdev/hono-actions@1.0.15
+
 ## 0.0.6
 
 ### Patch Changes

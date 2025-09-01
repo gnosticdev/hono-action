@@ -32,9 +32,9 @@ export async function buildRouter(){
 export type HonoRouter = Awaited<ReturnType<typeof buildRouter>>
 
 const app = await buildRouter()
-console.log('------- Hono Routes -------\n')
+console.log('------- Hono Routes -------')
 showRoutes(app)
-console.log('\n---------------------------\n')
+console.log('---------------------------')
 export default app`
 }
 

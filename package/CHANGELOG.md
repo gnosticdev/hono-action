@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.0.15
+
+### Patch Changes
+
+- add tests
+
 ## 1.0.14
 
 ### Patch Changes
