@@ -27,7 +27,7 @@
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
-    "prepublishOnly": "cd package && bun run typecheck && bun run build",
+    "prepublish": "bun --cwd package run typecheck && bun --cwd package run build",
     "publish": "bun changeset && bun changeset version && bun changeset publish",
     "test": "bun test --cwd package",
     "typecheck": "bun --cwd package typecheck",
