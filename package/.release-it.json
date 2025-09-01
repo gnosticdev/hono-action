@@ -10,8 +10,8 @@
   },
   "github": false,
   "hooks": {
-    "before:init": ["bun run build"],
-    "after:release": "cd .. && npm pack package && npm publish package-*.tgz --access public && rm package-*.tgz"
+    "after:release": "cd .. && npm pack package && npm publish package-*.tgz --access public && rm package-*.tgz",
+    "before:init": ["bun run build"]
   },
   "npm": {
     "access": "public",
