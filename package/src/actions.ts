@@ -68,10 +68,10 @@ type HonoActionParams<
  * @returns A Hono app instance with the defined route
  */
 export function defineHonoAction<
+    TEnv extends HonoEnv,
     TPath extends string,
     TSchema extends HonoActionSchema,
     TReturn,
-    TEnv extends HonoEnv = HonoEnv,
 >({ path, schema, handler }: HonoActionParams<TPath, TSchema, TReturn, TEnv>) {
     const factory = createFactory<TEnv, TPath>()
     const app = factory.createApp()

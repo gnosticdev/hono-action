@@ -140,10 +140,7 @@ export default defineIntegration({
                         codeGenDir.pathname,
                         'client.ts',
                     )
-                    const clientContent = getHonoClient(
-                        config.server.port,
-                        config.site,
-                    )
+                    const clientContent = getHonoClient(config.server.port)
                     await fs.writeFile(clientPathAbs, clientContent, 'utf-8')
 
                     addVirtualImports(params, {

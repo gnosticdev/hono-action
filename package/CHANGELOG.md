@@ -1,5 +1,23 @@
 # @gnosticdev/hono-actions
 
+## 1.0.14
+
+### Patch Changes
+
+- just publish
+
+## 1.0.13
+
+### Patch Changes
+
+- silly
+
+## 1.0.12
+
+### Patch Changes
+
+- update types
+
 ## 1.0.11
 
 ### Patch Changes
