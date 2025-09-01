@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
+    "@changesets/cli": "^2.29.6",
     "@release-it/bumper": "^7.0.5",
     "release-it": "^19.0.4"
   },
@@ -27,7 +28,9 @@
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "bun run --cwd package release",
+    "release": "bunx changeset publish",
+    "changeset": "bunx changeset",
+    "version": "bunx changeset version",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "1.0.7",
