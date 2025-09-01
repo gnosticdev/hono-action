@@ -7,7 +7,7 @@ export function generateRouter(opts: {
 }) {
     const { basePath, relativeActionsPath } = opts
 
-    return `import type { HonoEnv } from '@gnosticdev/hono-actions'
+    return `import type { HonoEnv } from '@gnosticdev/hono-actions/actions'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { showRoutes } from 'hono/dev'

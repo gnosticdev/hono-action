@@ -36,7 +36,7 @@ describe('HonoActionError', () => {
                 issue,
             })
 
-            expect(error.issue).toBe(issue)
+            expect(error.issue).toBe(issue!)
             expect(error.code).toBe('INPUT_VALIDATION_ERROR')
         })
     })

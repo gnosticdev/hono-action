@@ -39,7 +39,7 @@ describe('Integration Files', () => {
             })
 
             expect(routerContent).toContain(
-                "import type { HonoEnv } from '@gnosticdev/hono-actions'",
+                "import type { HonoEnv } from '@gnosticdev/hono-actions/actions'",
             )
             expect(routerContent).toContain("import { Hono } from 'hono'")
             expect(routerContent).toContain("import { cors } from 'hono/cors'")

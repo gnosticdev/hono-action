@@ -209,9 +209,6 @@ describe('Environment Bindings', () => {
                 sessionId: 'test-session',
             },
         }
-
-        const app = new Hono<MockEnv>()
-
         type MockBindings = Bindings & typeof mockEnv
 
         interface MockEnv {
@@ -219,24 +216,19 @@ describe('Environment Bindings', () => {
             Variables: any
         }
 
-        const testAction = defineHonoAction<
-            '/api/test-env',
-            v.ObjectSchema<
-                v.ObjectEntries,
-                v.ErrorMessage<v.ObjectIssue> | undefined
-            >,
-            unknown,
-            MockEnv
-        >({
+        const app = new Hono<MockEnv>()
+
+        const testAction = defineHonoAction({
             path: '/api/test-env',
             schema: v.object({
                 test: v.string(),
             }),
             handler: async (_input, c) => {
+                const env = c.env as any
                 // Test accessing environment variables
-                const apiKey = c.env.SOME_API_KEY
-                const sessionData = await c.env.ASTRO_LOCALS.kv.getItem(
-                    c.env.ASTRO_LOCALS.sessionId,
+                const apiKey = env.SOME_API_KEY
+                const sessionData = await env.ASTRO_LOCALS.kv.getItem(
+                    env.ASTRO_LOCALS.sessionId,
                 )
                 return { apiKey, sessionData }
             },

@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.0.17
+
+### Patch Changes
+
+- run typecheck and build
+
 ## 1.0.16
 
 ### Patch Changes
