@@ -10,10 +10,11 @@
   },
   "github": false,
   "hooks": {
-    "before:init": ["bun run build"]
+    "before:init": ["bun run build"],
+    "after:release": "npm publish . --access public"
   },
   "npm": {
     "access": "public",
-    "publish": true
+    "publish": false
   }
 }
