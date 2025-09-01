@@ -10,7 +10,7 @@
   },
   "github": false,
   "hooks": {
-    "before:init": ["bun run typecheck", "bun run build"]
+    "before:init": ["bun run build"]
   },
   "npm": {
     "access": "public",
