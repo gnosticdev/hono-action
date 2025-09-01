@@ -27,7 +27,7 @@
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
     "publish": "bun run release",
-    "release": "release-it",
+    "release": "cd package && bun run release",
     "typecheck": "bun --cwd package typecheck"
   },
   "version": "1.0.7",

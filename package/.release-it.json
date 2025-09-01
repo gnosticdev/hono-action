@@ -1,5 +1,5 @@
 {
-  "$schema": "node_modules/release-it/schema/release-it.json",
+  "$schema": "../node_modules/release-it/schema/release-it.json",
   "git": {
     "addUntrackedFiles": false,
     "commit": true,
@@ -10,16 +10,10 @@
   },
   "github": false,
   "hooks": {
-    "before:init": ["bun run --cwd package build"]
+    "before:init": ["bun run typecheck", "bun run build"]
   },
   "npm": {
     "access": "public",
-    "publish": true,
-    "publishPath": "./package"
-  },
-  "plugins": {
-    "@release-it/bumper": {
-      "in": "./package/package.json"
-    }
+    "publish": true
   }
 }
