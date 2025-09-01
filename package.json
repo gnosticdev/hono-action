@@ -22,16 +22,17 @@
   "scripts": {
     "build:package": "bun run --cwd package build",
     "build:playground": "bun run --cwd playground build",
+    "changeset": "bunx changeset",
     "clean-install": "rm -rf node_modules bun.lock package/dist playground/dist && bun i --no-cache",
     "lint": "biome check .",
     "lint:fix": "biome check --write",
     "package:dev": "bun run --cwd package dev",
     "playground:dev": "bun run --cwd playground dev",
-    "publish": "bun run release",
-    "release": "bunx changeset publish",
-    "changeset": "bunx changeset",
-    "version": "bunx changeset version",
-    "typecheck": "bun --cwd package typecheck"
+    "prepublish": "cd package && bun run typecheck && bun run build",
+    "publish": "bunx changeset version && bunx changeset publish",
+    "test": "bun test --cwd package",
+    "typecheck": "bun --cwd package typecheck",
+    "version": "bunx changeset version"
   },
   "version": "1.0.7",
   "workspaces": {

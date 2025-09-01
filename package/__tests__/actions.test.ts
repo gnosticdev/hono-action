@@ -7,8 +7,8 @@ import { prettyJSON } from 'hono/pretty-json'
 import { testClient } from 'hono/testing'
 import type { Bindings, Schema } from 'hono/types'
 import * as v from 'valibot'
-import { objectEntries } from '../../../src/lib/utils'
-import { defineHonoAction, HonoActionError } from '../src/index'
+import { defineHonoAction } from '../src/actions'
+import { HonoActionError } from '../src/error'
 
 interface HonoEnv {
     Bindings: {
@@ -177,9 +177,6 @@ describe('Action Routes', () => {
 
         app.route('/', actions.action1)
         app.route('/', actions.action2)
-        const _routes = objectEntries(actions).map(([_key, action]) =>
-            app.route('/', action),
-        )
 
         // Test first action
         const res1 = await app.request('/api/_actions/action1', {

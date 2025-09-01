@@ -140,7 +140,10 @@ export default defineIntegration({
                         codeGenDir.pathname,
                         'client.ts',
                     )
-                    const clientContent = getHonoClient(config.server.port)
+                    const clientContent = getHonoClient(
+                        config.server.port,
+                        config.site,
+                    )
                     await fs.writeFile(clientPathAbs, clientContent, 'utf-8')
 
                     addVirtualImports(params, {
@@ -170,7 +173,7 @@ export default defineIntegration({
                     injectTypes({
                         filename: 'actions.d.ts',
                         content: `
-  declare module '@gnosticdev/hono-actions' {
+  declare module '@gnosticdev/hono-actions/actions' {
     interface Bindings extends Env { ASTRO_LOCALS: App.Locals }
     interface HonoEnv { Bindings: Bindings }
   }

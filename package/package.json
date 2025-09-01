@@ -13,6 +13,7 @@
   },
   "description": "Define server actions with built-in validation, error handling, and a pre-built hono client for calling the routes.",
   "devDependencies": {
+    "@types/bun": "^1.2.21",
     "tsup": "^8.5.0",
     "typescript": "^5.9.2"
   },
@@ -53,5 +54,5 @@
   },
   "type": "module",
   "types": "./dist/index.d.ts",
-  "version": "1.0.10"
+  "version": "1.0.11"
 }

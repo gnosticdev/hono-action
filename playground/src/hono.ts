@@ -6,7 +6,7 @@ export const myAction = defineHonoAction({
     schema: v.object({
         name: v.string(),
     }),
-    handler: async (input) => {
+    handler: async (input, ctx) => {
         return {
             message: `Hello ${input.name}!`,
         }
