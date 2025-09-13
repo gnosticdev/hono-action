@@ -3,6 +3,7 @@ import type { Context } from 'hono'
 import { createFactory } from 'hono/factory'
 import * as v from 'valibot'
 import { HonoActionError } from './error.js'
+import { z } from 'astro/zod'
 
 export { HonoActionError } from './error.js'
 
