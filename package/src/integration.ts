@@ -19,16 +19,30 @@ import { reservedRoutes } from './lib/utils.js'
 
 const optionsSchema = z
     .object({
+        /**
+         * The base path for the API routes
+         *
+         * @default '/api'
+         */
         basePath: z.string().optional(),
         actionsPath: z.string().optional(),
+        /**
+         * The path to the actions file. If not provided, the integration will automatically discover the actions file by searching for one of the following patterns:
+         * - `src/server/actions.ts`
+         * - `src/hono/actions.ts`
+         * - `src/hono/index.ts`
+         * - `src/hono.ts`
+         *
+         * @default 'src/server/actions.ts'
+         */
     })
     .optional()
 
 export type IntegrationOptions = z.infer<typeof optionsSchema>
 
-const VIRTUAL_MODULE_ID_CLIENT = '@gnosticdev/hono-actions/client'
+export const VIRTUAL_MODULE_ID_CLIENT = '@gnosticdev/hono-actions/client'
 // const VIRTUAL_MODULE_ID_DEFINITION = 'virtual:hono-actions'
-const VIRTUAL_MODULE_ID_ROUTER = 'virtual:hono-actions/router'
+export const VIRTUAL_MODULE_ID_ROUTER = 'virtual:hono-actions/router'
 
 const ACTION_PATTERNS = [
     'src/server/actions.ts',
@@ -42,6 +56,10 @@ const ACTION_PATTERNS = [
  *
  * This integration automatically discovers action files in your project,
  * generates type-safe client code, and sets up API routes.
+ *
+ * Supprted Adapters:
+ * - Cloudflare
+ * - (more to come)
  *
  * @param options - Configuration options for the integration
  * @param options.basePath - Base path for API routes (default: '/api')
@@ -58,7 +76,7 @@ export default defineIntegration({
             )
         }
 
-        createResolver(import.meta.url)
+        const baseResolver = createResolver(import.meta.url)
 
         return {
             name,
@@ -68,16 +86,6 @@ export default defineIntegration({
                         params
                     const root = config.root.pathname
 
-                    // the definition is available via the export
-                    // 1) Make the definition module available immediately
-                    // const resolvedDefinitionPath = resolve('./define-action.ts')
-                    // addVirtualImports(params, {
-                    //     name,
-                    //     imports: {
-                    //         [VIRTUAL_MODULE_ID_DEFINITION]: `export * from '${resolvedDefinitionPath}';`
-                    //     }
-                    // })
-
                     // 2) Discover user's actions file(s) in the CONSUMER project
                     const files = await glob(ACTION_PATTERNS, {
                         cwd: root,
@@ -86,14 +94,14 @@ export default defineIntegration({
                     })
                     const actionsPath = options.actionsPath ?? files[0] // only need the first file
                     if (!actionsPath) {
-                        throw new Error(
+                        logger.warn(
                             `No actions found. Create one of:\n${ACTION_PATTERNS.map((p) => ` - ${p}`).join('\n')}`,
                         )
+                        return
                     }
 
-                    const resolvedActionsPath = path.isAbsolute(actionsPath)
-                        ? actionsPath
-                        : path.join(root, actionsPath)
+                    const resolvedActionsPath =
+                        baseResolver.resolve(actionsPath)
 
                     params.addWatchFile(resolvedActionsPath)
 

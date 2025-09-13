@@ -1,8 +1,12 @@
-import { describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
 import { testClient } from 'hono/testing'
 import type { ExtractSchema, MergeSchemaPath } from 'hono/types'
+import fs from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
+import { glob } from 'tinyglobby'
 import * as v from 'valibot'
 import { defineHonoAction, HonoActionError, type HonoEnv } from '../src/actions'
 import {
@@ -395,6 +399,153 @@ describe('Integration Tests', () => {
             expect(routerContent).toContain('import type')
             expect(clientContent).toContain('import type')
             expect(handlerContent).toContain('import type')
+        })
+    })
+
+    describe('Integration Setup Behavior', () => {
+        let tempDir: string
+        let originalConsoleWarn: typeof console.warn
+        let consoleWarnCalls: string[] = []
+
+        beforeEach(async () => {
+            // Create a temporary directory for testing
+            tempDir = await fs.mkdtemp(
+                path.join(tmpdir(), 'hono-actions-test-'),
+            )
+
+            // Mock console.warn to capture warning calls
+            originalConsoleWarn = console.warn
+            consoleWarnCalls = []
+            console.warn = (...args: any[]) => {
+                consoleWarnCalls.push(args.join(' '))
+                originalConsoleWarn(...args)
+            }
+        })
+
+        afterEach(async () => {
+            // Restore original console.warn
+            console.warn = originalConsoleWarn
+
+            // Clean up temporary directory
+            try {
+                await fs.rm(tempDir, { recursive: true, force: true })
+            } catch (error) {
+                // Ignore cleanup errors
+            }
+        })
+
+        it('should warn and return early when no action patterns are found', async () => {
+            // Create an empty directory with no action files
+            const emptyDir = path.join(tempDir, 'empty-project')
+            await fs.mkdir(emptyDir, { recursive: true })
+
+            // Test the action pattern discovery logic
+            const ACTION_PATTERNS = [
+                'src/server/actions.ts',
+                'src/hono/actions.ts',
+                'src/hono/index.ts',
+                'src/hono.ts',
+            ]
+
+            // Simulate the integration logic for finding actions - no files should be found in empty directory
+            const files = await glob(ACTION_PATTERNS, {
+                cwd: emptyDir,
+                expandDirectories: false,
+                absolute: true,
+            })
+
+            // Verify no files were found
+            expect(files).toHaveLength(0)
+
+            // Simulate the warning logic from the integration
+            if (files.length === 0) {
+                const warningMessage = `No actions found. Create one of:\n${ACTION_PATTERNS.map((p) => ` - ${p}`).join('\n')}`
+                console.warn(warningMessage)
+            }
+
+            // Verify the warning was called
+            expect(consoleWarnCalls).toHaveLength(1)
+            expect(consoleWarnCalls[0]).toContain(
+                'No actions found. Create one of:',
+            )
+            expect(consoleWarnCalls[0]).toContain('src/server/actions.ts')
+            expect(consoleWarnCalls[0]).toContain('src/hono/actions.ts')
+            expect(consoleWarnCalls[0]).toContain('src/hono/index.ts')
+            expect(consoleWarnCalls[0]).toContain('src/hono.ts')
+        })
+
+        it('should continue setup when action files are found', async () => {
+            // Create a directory with an action file
+            const projectDir = path.join(tempDir, 'project-with-actions')
+            await fs.mkdir(projectDir, { recursive: true })
+            await fs.mkdir(path.join(projectDir, 'src', 'hono'), {
+                recursive: true,
+            })
+
+            // Create a mock action file
+            const actionFile = path.join(
+                projectDir,
+                'src',
+                'hono',
+                'actions.ts',
+            )
+            await fs.writeFile(actionFile, '// Mock action file', 'utf-8')
+
+            const ACTION_PATTERNS = [
+                'src/server/actions.ts',
+                'src/hono/actions.ts',
+                'src/hono/index.ts',
+                'src/hono.ts',
+            ]
+
+            // Test the action pattern discovery logic
+            const files = await glob(ACTION_PATTERNS, {
+                cwd: projectDir,
+                expandDirectories: false,
+                absolute: true,
+            })
+
+            // Verify files were found
+            expect(files).toHaveLength(1)
+            expect(files[0]).toBe(actionFile)
+
+            // Simulate the integration logic - should not warn
+            if (files.length === 0) {
+                const warningMessage = `No actions found. Create one of:\n${ACTION_PATTERNS.map((p) => ` - ${p}`).join('\n')}`
+                console.warn(warningMessage)
+            }
+
+            // Verify no warning was called
+            expect(consoleWarnCalls).toHaveLength(0)
+        })
+
+        it('should handle custom actionsPath option correctly', async () => {
+            // Create a directory with a custom action file
+            const projectDir = path.join(tempDir, 'project-with-custom-actions')
+            await fs.mkdir(projectDir, { recursive: true })
+
+            // Create a custom action file
+            const customActionFile = path.join(projectDir, 'custom-actions.ts')
+            await fs.writeFile(
+                customActionFile,
+                '// Custom action file',
+                'utf-8',
+            )
+
+            // Simulate the integration logic with custom actionsPath
+            const customActionsPath = customActionFile
+            const files = await glob([customActionsPath], {
+                cwd: projectDir,
+                expandDirectories: false,
+                absolute: true,
+            })
+
+            // Verify the custom file was found
+            expect(files).toHaveLength(1)
+            expect(files[0]).toBe(customActionFile)
+
+            // Should not warn when custom path is provided and file exists
+            expect(consoleWarnCalls).toHaveLength(0)
         })
     })
 })

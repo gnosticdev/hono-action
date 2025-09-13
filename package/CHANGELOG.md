@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.0.18
+
+### Patch Changes
+
+- forgot to use /actions in injected types
+
 ## 1.0.17
 
 ### Patch Changes

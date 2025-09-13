@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'bun:test'
 import {
+    VIRTUAL_MODULE_ID_CLIENT,
+    VIRTUAL_MODULE_ID_ROUTER,
+} from '../src/integration'
+import {
     generateRouter,
     getAstroHandler,
     getHonoClient,
@@ -8,10 +12,6 @@ import {
 describe('Virtual Imports', () => {
     describe('Virtual Import IDs', () => {
         it('should use consistent virtual import IDs', () => {
-            // These should match the constants defined in the integration
-            const VIRTUAL_MODULE_ID_CLIENT = '@gnosticdev/hono-actions/client'
-            const VIRTUAL_MODULE_ID_ROUTER = 'virtual:hono-actions/router'
-
             expect(VIRTUAL_MODULE_ID_CLIENT).toBe(
                 '@gnosticdev/hono-actions/client',
             )
@@ -128,7 +128,9 @@ describe('Virtual Imports', () => {
             })
 
             // Should use proper package imports
-            expect(routerContent).toContain("from '@gnosticdev/hono-actions'")
+            expect(routerContent).toContain(
+                "from '@gnosticdev/hono-actions/actions'",
+            )
             expect(routerContent).toContain("from 'hono'")
             expect(routerContent).toContain("from 'hono/cors'")
             expect(routerContent).toContain("from 'hono/dev'")
@@ -227,9 +229,7 @@ describe('Virtual Imports', () => {
             expect(clientContent).toContain('import.meta.env.SITE')
 
             // Should handle custom site URL
-            expect(clientContent).toContain(
-                "return 'import.meta.env.SITE' ?? ''",
-            )
+            expect(clientContent).toContain("return import.meta.env.SITE ?? ''")
         })
 
         it('should handle different ports correctly', () => {
@@ -237,7 +237,7 @@ describe('Virtual Imports', () => {
 
             ports.forEach((port) => {
                 const clientContent = getHonoClient(port)
-                expect(clientContent).toContain(`\${${port}}`)
+                expect(clientContent).toContain(`http://localhost:\${${port}}`)
             })
         })
     })
