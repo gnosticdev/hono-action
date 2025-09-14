@@ -72,9 +72,11 @@ describe('Integration Files', () => {
             })
 
             expect(routerContent).toContain(
-                'for (const action of Object.values(honoActions))',
+                'for (const [routeName, action] of Object.entries(honoActions))',
             )
-            expect(routerContent).toContain("app.route('/', action)")
+            expect(routerContent).toContain(
+                'app.route(`/${routeName}`, action)',
+            )
         })
 
         it('should include type definitions', () => {
@@ -153,8 +155,11 @@ describe('Integration Files', () => {
             expect(clientContent).toContain(
                 "import type { HonoRouter } from './router.js'",
             )
-            expect(clientContent).toContain("import { hc } from 'hono/client'")
-            expect(clientContent).toContain('export function getBaseUrl()')
+            expect(clientContent).toContain(
+                "import { hc, parseResponse } from 'hono/client'",
+            )
+            expect(clientContent).toContain('function getBaseUrl()')
+            expect(clientContent).toContain('export { parseResponse }')
             expect(clientContent).toContain(
                 'export const honoClient = hc<HonoRouter>(getBaseUrl())',
             )

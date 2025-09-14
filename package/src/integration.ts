@@ -25,7 +25,6 @@ const optionsSchema = z
          * @default '/api'
          */
         basePath: z.string().optional(),
-        actionsPath: z.string().optional(),
         /**
          * The path to the actions file. If not provided, the integration will automatically discover the actions file by searching for one of the following patterns:
          * - `src/server/actions.ts`
@@ -35,6 +34,7 @@ const optionsSchema = z
          *
          * @default 'src/server/actions.ts'
          */
+        actionsPath: z.string().optional(),
     })
     .optional()
 

@@ -1,14 +1,20 @@
+import { z } from 'astro/zod'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
+import { logger } from 'hono/logger'
+import { prettyJSON } from 'hono/pretty-json'
 import { testClient } from 'hono/testing'
 import type { ExtractSchema, MergeSchemaPath } from 'hono/types'
 import fs from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { glob } from 'tinyglobby'
-import * as v from 'valibot'
 import { defineHonoAction, HonoActionError, type HonoEnv } from '../src/actions'
+import {
+    VIRTUAL_MODULE_ID_CLIENT,
+    VIRTUAL_MODULE_ID_ROUTER,
+} from '../src/integration'
 import {
     generateRouter,
     getAstroHandler,
@@ -18,25 +24,27 @@ import {
 // Mock the generated router for testing
 const mockActions = {
     testAction: defineHonoAction({
-        path: '/test',
-        schema: v.object({
-            name: v.string(),
-            age: v.number(),
+        schema: z.object({
+            name: z.string(),
+            age: z.number(),
         }),
         handler: async (input) => ({
             message: `Hello ${input.name}, you are ${input.age} years old`,
         }),
     }),
     anotherAction: defineHonoAction({
-        path: '/another',
-        schema: v.object({
-            value: v.string(),
+        schema: z.object({
+            value: z.string(),
         }),
         handler: async (input) => ({
             result: `Processed: ${input.value}`,
         }),
     }),
 }
+
+type ActionsSchema = ExtractSchema<
+    (typeof mockActions)[keyof typeof mockActions]
+>
 
 describe('Integration Tests', () => {
     describe('Generated Router Integration', () => {
@@ -123,18 +131,16 @@ describe('Integration Tests', () => {
     })
 
     describe('Virtual Imports Integration', () => {
-        it('should generate consistent virtual import paths', () => {
-            // Test that the virtual import IDs are consistent
-            const expectedVirtualIds = [
-                '@gnosticdev/hono-actions/client',
-                'virtual:hono-actions/router',
-            ]
-
-            // These should match what's used in the integration
-            expect(expectedVirtualIds).toContain(
+        it('should use consistent virtual import IDs', () => {
+            expect(VIRTUAL_MODULE_ID_CLIENT).toBe(
                 '@gnosticdev/hono-actions/client',
             )
-            expect(expectedVirtualIds).toContain('virtual:hono-actions/router')
+            expect(VIRTUAL_MODULE_ID_ROUTER).toBe('virtual:hono-actions/router')
+        })
+
+        it('should have valid virtual import ID formats', () => {
+            expect(VIRTUAL_MODULE_ID_CLIENT).toMatch(/^@[^/]+\/[^/]+/)
+            expect(VIRTUAL_MODULE_ID_ROUTER).toMatch(/^virtual:/)
         })
     })
 
@@ -165,28 +171,26 @@ describe('Integration Tests', () => {
 
         it('should work with generated router pattern', async () => {
             // Create a test app using the same pattern as generated router
-            const app = new Hono<HonoEnv>().basePath('/api')
+            const app = new Hono<
+                HonoEnv,
+                MergeSchemaPath<
+                    ActionsSchema,
+                    '/api/testAction' | '/api/anotherAction'
+                >,
+                '/api'
+            >().basePath('/api')
+
+            app.use(logger(), prettyJSON())
 
             // Add actions using the same pattern as generated code
-            for (const action of Object.values(mockActions)) {
-                app.route('/', action)
+            for (const [routeName, action] of Object.entries(mockActions)) {
+                app.route(`/${routeName}`, action)
             }
 
-            const client = testClient(
-                app as Hono<
-                    HonoEnv,
-                    MergeSchemaPath<
-                        ExtractSchema<
-                            (typeof mockActions)[keyof typeof mockActions]
-                        >,
-                        '/api'
-                    >,
-                    '/api'
-                >,
-            )
+            const client = testClient(app)
 
             // Test the first action
-            const res1 = await client.api.test.$post({
+            const res1 = await client.api.testAction.$post({
                 json: {
                     name: 'John',
                     age: 30,
@@ -198,7 +202,7 @@ describe('Integration Tests', () => {
             expect(json1.data?.message).toBe('Hello John, you are 30 years old')
 
             // Test the second action
-            const res2 = await client.api.another.$post({
+            const res2 = await client.api.anotherAction.$post({
                 json: {
                     value: 'test value',
                 },
@@ -210,33 +214,29 @@ describe('Integration Tests', () => {
         })
 
         it('should handle multiple actions in the same router', async () => {
-            const app = new Hono<HonoEnv>().basePath('/api')
+            const app = new Hono<
+                HonoEnv,
+                MergeSchemaPath<
+                    ActionsSchema,
+                    '/api/testAction' | '/api/anotherAction'
+                >,
+                '/api'
+            >().basePath('/api')
 
             // Simulate the generated router pattern
-            for (const action of Object.values(mockActions)) {
-                app.route('/', action)
+            for (const [routeName, action] of Object.entries(mockActions)) {
+                app.route(`/${routeName}`, action)
             }
 
-            const client = testClient(
-                app as Hono<
-                    HonoEnv,
-                    MergeSchemaPath<
-                        ExtractSchema<
-                            (typeof mockActions)[keyof typeof mockActions]
-                        >,
-                        '/api'
-                    >,
-                    '/api'
-                >,
-            )
+            const client = testClient(app)
 
             // Test both actions exist
-            const res1 = await client.api.test.$post({
+            const res1 = await client.api.testAction.$post({
                 json: { name: 'Test', age: 25 },
             })
             expect(res1.status).toBe(200)
 
-            const res2 = await client.api.another.$post({
+            const res2 = await client.api.anotherAction.$post({
                 json: { value: 'test' },
             })
             expect(res2.status).toBe(200)
@@ -245,27 +245,27 @@ describe('Integration Tests', () => {
 
     describe('Error Handling Integration', () => {
         it('should handle validation errors in generated pattern', async () => {
-            const app = new Hono<HonoEnv>().basePath('/api')
+            const app = new Hono<
+                HonoEnv,
+                MergeSchemaPath<
+                    ActionsSchema,
+                    '/api/testAction' | '/api/anotherAction'
+                >,
+                '/api'
+            >().basePath('/api')
 
             const action = defineHonoAction({
-                path: '/validation-test',
-                schema: v.object({
-                    email: v.pipe(v.string(), v.email()),
-                    age: v.pipe(v.number(), v.minValue(18)),
+                schema: z.object({
+                    email: z.string().email(),
+                    age: z.number().min(18),
                 }),
                 handler: async (input) => input,
             })
 
-            app.route('/', action)
-            const client = testClient(
-                app as Hono<
-                    HonoEnv,
-                    MergeSchemaPath<ExtractSchema<typeof action>, '/api'>,
-                    '/api'
-                >,
-            )
+            app.route('/testAction', action)
+            const client = testClient(app)
 
-            const res = await client.api['validation-test'].$post({
+            const res = await client.api.testAction.$post({
                 json: {
                     email: 'invalid-email',
                     age: 15,
@@ -281,9 +281,8 @@ describe('Integration Tests', () => {
 
         it('should handle action errors in generated pattern', async () => {
             const action = defineHonoAction({
-                path: '/error-test',
-                schema: v.object({
-                    shouldError: v.boolean(),
+                schema: z.object({
+                    shouldError: z.boolean(),
                 }),
                 handler: async (input) => {
                     if (input.shouldError) {
@@ -296,14 +295,10 @@ describe('Integration Tests', () => {
                 },
             })
 
-            const app = new Hono<HonoEnv>().basePath('/api').route('/', action)
-            const client = testClient(
-                app as Hono<
-                    HonoEnv,
-                    MergeSchemaPath<ExtractSchema<typeof action>, '/api'>,
-                    '/'
-                >,
-            )
+            const app = new Hono<HonoEnv>()
+                .basePath('/api')
+                .route('/error-test', action)
+            const client = testClient(app)
 
             const res = await client.api['error-test'].$post({
                 json: { shouldError: true },
@@ -339,9 +334,8 @@ describe('Integration Tests', () => {
             }
 
             const action = defineHonoAction({
-                path: '/env-test',
-                schema: v.object({
-                    test: v.string(),
+                schema: z.object({
+                    test: z.string(),
                 }),
                 handler: async (_input, c) => {
                     return {
@@ -356,17 +350,11 @@ describe('Integration Tests', () => {
                     c.env = mockEnv
                     return next()
                 })
-                .route('/', action)
+                .route('/env-test', action)
 
             showRoutes(app)
 
-            const client = testClient(
-                app as Hono<
-                    HonoEnv,
-                    MergeSchemaPath<ExtractSchema<typeof action>, '/api'>,
-                    '/'
-                >,
-            )
+            const client = testClient(app)
 
             const res = await client.api['env-test'].$post({
                 json: { test: 'value' },

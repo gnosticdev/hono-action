@@ -1,12 +1,11 @@
 import { defineHonoAction } from '@gnosticdev/hono-actions/actions'
-import * as v from 'valibot'
+import { z } from 'astro/zod'
 
 export const myAction = defineHonoAction({
-    path: '/myAction',
-    schema: v.object({
-        name: v.string(),
+    schema: z.object({
+        name: z.string(),
     }),
-    handler: async (input, ctx) => {
+    handler: async (input) => {
         return {
             message: `Hello ${input.name}!`,
         }

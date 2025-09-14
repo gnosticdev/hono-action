@@ -3,6 +3,9 @@
   "workspaces": {
     "": {
       "name": "root",
+      "dependencies": {
+        "@hono/zod-validator": "^0.7.2",
+      },
       "devDependencies": {
         "@biomejs/biome": "2.2.2",
         "@changesets/cli": "^2.29.6",
@@ -12,7 +15,7 @@
     },
     "package": {
       "name": "@gnosticdev/hono-actions",
-      "version": "1.0.11",
+      "version": "1.0.19",
       "dependencies": {
         "@astrojs/cloudflare": "^12.6.7",
         "@hono/valibot-validator": "^0.5.3",
@@ -31,7 +34,7 @@
     },
     "playground": {
       "name": "playground",
-      "version": "0.0.3",
+      "version": "0.0.10",
       "dependencies": {
         "@gnosticdev/hono-actions": "workspace:*",
         "@tailwindcss/vite": "^4.1.12",
@@ -222,6 +225,8 @@
     "@gnosticdev/hono-actions": ["@gnosticdev/hono-actions@workspace:package"],
 
     "@hono/valibot-validator": ["@hono/valibot-validator@0.5.3", "", { "peerDependencies": { "hono": ">=3.9.0", "valibot": "^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc" } }, "sha512-91wjmjDvrTdEm2ZcuCyLBghtld78QoLEduzfkqLo1L74n6sqqoVfc0gDfmju1Ar6w1eK8Q0UyIubrtj4KMWVnQ=="],
+
+    "@hono/zod-validator": ["@hono/zod-validator@0.7.2", "", { "peerDependencies": { "hono": ">=3.9.0", "zod": "^3.25.0 || ^4.0.0" } }, "sha512-ub5eL/NeZ4eLZawu78JpW/J+dugDAYhwqUIdp9KYScI6PZECij4Hx4UsrthlEUutqDDhPwRI0MscUfNkvn/mqQ=="],
 
     "@iarna/toml": ["@iarna/toml@3.0.0", "", {}, "sha512-td6ZUkz2oS3VeleBcN+m//Q6HlCFCPrnI0FZhrt/h4XqLEdOyYp2u21nd8MdsR+WJy5r9PTDaHTDDfhf4H4l6Q=="],
 

@@ -16,8 +16,15 @@ export default defineConfig({
             ),
         }),
     ],
+    server: {
+        port: 4322,
+    },
     adapter: cloudflare(),
     vite: {
+        server: {
+            strictPort: true,
+            port: 4322,
+        },
         plugins: [tailwindcss()],
     },
 })

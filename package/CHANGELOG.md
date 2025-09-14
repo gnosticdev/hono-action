@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.0.19
+
+### Patch Changes
+
+- remove error for no adapter found
+
 ## 1.0.18
 
 ### Patch Changes

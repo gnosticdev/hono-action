@@ -1,3 +1,4 @@
+import { z } from 'astro/zod'
 import { beforeEach, describe, expect, it, jest } from 'bun:test'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
@@ -6,7 +7,6 @@ import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { testClient } from 'hono/testing'
 import type { Bindings, Schema } from 'hono/types'
-import * as v from 'valibot'
 import { defineHonoAction } from '../src/actions'
 import { HonoActionError } from '../src/error'
 
@@ -43,10 +43,9 @@ describe('Hono Actions', () => {
         it('should create a valid action with successful response', async () => {
             // Define a simple test action
             const testAction = defineHonoAction({
-                path: '/test',
-                schema: v.object({
-                    name: v.string(),
-                    age: v.number(),
+                schema: z.object({
+                    name: z.string(),
+                    age: z.number(),
                 }),
                 handler: async (input, _c) => {
                     return {
@@ -56,7 +55,7 @@ describe('Hono Actions', () => {
             })
 
             // Mount the action to our test app
-            app.route('/', testAction)
+            app.route('/test', testAction)
             showRoutes(app, { colorize: true, verbose: true })
 
             // Test the action with valid input
@@ -82,20 +81,19 @@ describe('Hono Actions', () => {
         })
 
         it('should handle validation errors correctly', async () => {
-            const schema = v.object({
-                email: v.pipe(v.string(), v.email()),
-                age: v.pipe(v.number(), v.minValue(18)),
+            const schema = z.object({
+                email: z.string().email(),
+                age: z.number().min(18),
             })
 
             const testAction = defineHonoAction({
-                path: '/validation-error',
                 schema,
                 handler: async (input) => {
                     return input
                 },
             })
 
-            app.route('/', testAction)
+            app.route('/validation-error', testAction)
 
             const res = await app.request('/api/validation-error', {
                 method: 'POST',
@@ -115,12 +113,11 @@ describe('Hono Actions', () => {
         })
 
         it('should handle action errors correctly', async () => {
-            const schema = v.object({
-                shouldError: v.boolean(),
+            const schema = z.object({
+                shouldError: z.boolean(),
             })
 
             const testAction = defineHonoAction({
-                path: '/error',
                 schema,
                 handler: async (input) => {
                     if (input.shouldError) {
@@ -133,7 +130,7 @@ describe('Hono Actions', () => {
                 },
             })
 
-            app.route('/', testAction)
+            app.route('/error', testAction)
 
             const res = await app.request('/api/error', {
                 method: 'POST',
@@ -157,17 +154,15 @@ describe('Hono Actions', () => {
 // Test the action routes integration
 describe('Action Routes', () => {
     it('should properly integrate multiple actions', async () => {
-        const schema1 = v.object({ field: v.string() })
-        const schema2 = v.object({ number: v.number() })
+        const schema1 = z.object({ field: z.string() })
+        const schema2 = z.object({ number: z.number() })
 
         const actions = {
             action1: defineHonoAction({
-                path: '/action1',
                 schema: schema1,
                 handler: async (input) => input,
             }),
             action2: defineHonoAction({
-                path: '/action2',
                 schema: schema2,
                 handler: async (input) => input,
             }),
@@ -175,8 +170,8 @@ describe('Action Routes', () => {
 
         const app = new Hono<HonoEnv, Schema>().basePath('/api/_actions')
 
-        app.route('/', actions.action1)
-        app.route('/', actions.action2)
+        app.route('/action1', actions.action1)
+        app.route('/action2', actions.action2)
 
         // Test first action
         const res1 = await app.request('/api/_actions/action1', {
@@ -209,22 +204,20 @@ describe('Environment Bindings', () => {
                 sessionId: 'test-session',
             },
         }
-        type MockBindings = Bindings & typeof mockEnv
+        type MockBindings = typeof mockEnv
 
         interface MockEnv {
             Bindings: MockBindings
-            Variables: any
+            Variables: Record<string, unknown>
         }
 
-        const app = new Hono<MockEnv>()
-
         const testAction = defineHonoAction({
-            path: '/api/test-env',
-            schema: v.object({
-                test: v.string(),
+            schema: z.object({
+                test: z.string(),
             }),
             handler: async (_input, c) => {
-                const env = c.env as any
+                const env = c.env as MockBindings
+
                 // Test accessing environment variables
                 const apiKey = env.SOME_API_KEY
                 const sessionData = await env.ASTRO_LOCALS.kv.getItem(
@@ -234,9 +227,13 @@ describe('Environment Bindings', () => {
             },
         })
 
-        const route = app.route('/', testAction)
+        const app = new Hono<MockEnv>().basePath('/api')
+        app.use('*', (c, next) => {
+            c.env = mockEnv
+            return next()
+        }).route('/test-env', testAction)
 
-        const res = await route.request(
+        const res = await app.request(
             '/api/test-env',
             {
                 method: 'POST',
@@ -248,7 +245,7 @@ describe('Environment Bindings', () => {
 
         expect(res.status).toBe(200)
 
-        const json = (await res.json()) as any
+        const json = await res.json()
         expect(json.data.apiKey).toBe('test-key')
         expect(json.data.sessionData).toEqual({ some: 'data' })
     })
@@ -258,23 +255,21 @@ describe('Hono Client', () => {
     const app = appFactory.createApp().basePath('/api')
     const routes = app
         .route(
-            '/',
+            '/test',
             defineHonoAction({
-                path: '/test',
-                schema: v.object({
-                    name: v.string(),
-                    age: v.number(),
+                schema: z.object({
+                    name: z.string(),
+                    age: z.number(),
                 }),
                 handler: async (input) => input,
             }),
         )
         .route(
-            '/',
+            '/test2',
             defineHonoAction({
-                path: '/test2',
-                schema: v.object({
-                    name2: v.string(),
-                    age2: v.number(),
+                schema: z.object({
+                    name2: z.string(),
+                    age2: z.number(),
                 }),
                 handler: async (input) => input,
             }),

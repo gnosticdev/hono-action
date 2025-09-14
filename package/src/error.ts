@@ -1,5 +1,3 @@
-import type * as v from 'valibot'
-
 /**
  * Standard error codes for actions
  */
@@ -12,13 +10,9 @@ export type ActionErrorCode =
     | 'SESSION_NOT_FOUND'
 
 export class HonoActionError<
-    TSchema extends v.ObjectSchema<
-        v.ObjectEntries,
-        v.ErrorMessage<v.ObjectIssue> | undefined
-    >,
     TMessage extends string,
     TCode extends ActionErrorCode,
-    TIssue extends v.InferIssue<TSchema>,
+    TIssue = any,
 > extends Error {
     code: TCode
     issue?: TIssue
