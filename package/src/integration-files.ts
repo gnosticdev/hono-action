@@ -18,7 +18,7 @@ import type { ExtractSchema, MergeSchemaPath } from 'hono/types'
 async function buildRouter(){
     type ActionSchema = ExtractSchema<typeof honoActions[keyof typeof honoActions]>
     const { honoActions} = await import('${relativeActionsPath}')
-    const app = new Hono<HonoEnv, MergeSchemaPath<ActionSchema, '${basePath}'>>().basePath('${basePath}')
+    const app = new Hono<HonoEnv, MergeSchemaPath<ActionSchema, '${basePath}/keyof typeof honoActions'>>().basePath('${basePath}')
 
     app.use('*', cors(), logger(), prettyJSON())
 

@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.1.0
+
+### Minor Changes
+
+- switch from valibot to zod to use with built-in astro/zod
+
 ## 1.0.19
 
 ### Patch Changes
