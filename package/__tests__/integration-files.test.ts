@@ -39,7 +39,7 @@ describe('Integration Files', () => {
             })
 
             expect(routerContent).toContain(
-                "import type { HonoEnv } from '@gnosticdev/hono-actions/actions'",
+                "import type { HonoEnv, MergeActionKeyIntoPath } from '@gnosticdev/hono-actions/actions'",
             )
             expect(routerContent).toContain("import { Hono } from 'hono'")
             expect(routerContent).toContain("import { cors } from 'hono/cors'")
@@ -86,7 +86,10 @@ describe('Integration Files', () => {
             })
 
             expect(routerContent).toContain(
-                'type ActionSchema = ExtractSchema<typeof honoActions[keyof typeof honoActions]>',
+                `type ActionsWithKeyedPaths = MergeActionKeyIntoPath<typeof honoActions>`,
+            )
+            expect(routerContent).toContain(
+                'type ActionSchema = ExtractSchema<ActionsWithKeyedPaths[keyof ActionsWithKeyedPaths]>',
             )
             expect(routerContent).toContain(
                 'export type HonoRouter = Awaited<ReturnType<typeof buildRouter>>',

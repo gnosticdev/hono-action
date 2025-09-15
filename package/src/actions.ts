@@ -1,8 +1,9 @@
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'astro/zod'
-import type { Context } from 'hono'
-import { HonoActionError } from './error.js'
+import type { Context, Hono as HonoInstance } from 'hono'
 import { Hono } from 'hono/quick'
+import type { MergeSchemaPath } from 'hono/types'
+import { HonoActionError } from './error.js'
 
 export { HonoActionError } from './error.js'
 
@@ -25,6 +26,42 @@ export interface HonoEnv {
 }
 
 type HonoActionSchema = z.ZodTypeAny
+
+/**
+ * Merge each action key into its route path.
+ *
+ * Given a map of actions where each `Hono` app defines handlers at `"/"`, this
+ * transforms the schema so each action's path becomes `"/${key}"`.
+ *
+ * Example:
+ * ```ts
+ * declare const honoActions: {
+ *   myAction: Hono<HonoEnv, { '/': { $post: any } }, '/'>
+ *   anotherAction: Hono<HonoEnv, { '/': { $post: any } }, '/'>
+ * }
+ *
+ * type ActionsWithKeyedPaths = MergeActionKeyIntoPath<typeof honoActions>
+ * // => {
+ * //   myAction: Hono<HonoEnv, { '/myAction': { $post: any } }, '/'>
+ * //   anotherAction: Hono<HonoEnv, { '/anotherAction': { $post: any } }, '/'>
+ * // }
+ * ```
+ */
+export type MergeActionKeyIntoPath<
+    TActions extends Record<string, HonoInstance<any, any, any>>,
+> = {
+    [K in keyof TActions]: TActions[K] extends HonoInstance<
+        infer TEnv,
+        infer TSchema,
+        infer TBase
+    >
+        ? HonoInstance<
+              TEnv,
+              MergeSchemaPath<TSchema, `/${Extract<K, string>}`>,
+              TBase
+          >
+        : never
+}
 
 interface HonoActionContext<
     TEnv extends HonoEnv,

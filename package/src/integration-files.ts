@@ -7,7 +7,7 @@ export function generateRouter(opts: {
 }) {
     const { basePath, relativeActionsPath } = opts
 
-    return `import type { HonoEnv } from '@gnosticdev/hono-actions/actions'
+    return `import type { HonoEnv, MergeActionKeyIntoPath } from '@gnosticdev/hono-actions/actions'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { showRoutes } from 'hono/dev'
@@ -16,9 +16,10 @@ import { prettyJSON } from 'hono/pretty-json'
 import type { ExtractSchema, MergeSchemaPath } from 'hono/types'
 
 async function buildRouter(){
-    type ActionSchema = ExtractSchema<typeof honoActions[keyof typeof honoActions]>
+    type ActionsWithKeyedPaths = MergeActionKeyIntoPath<typeof honoActions>
+    type ActionSchema = ExtractSchema<ActionsWithKeyedPaths[keyof ActionsWithKeyedPaths]>
     const { honoActions} = await import('${relativeActionsPath}')
-    const app = new Hono<HonoEnv, MergeSchemaPath<ActionSchema, '${basePath}/keyof typeof honoActions'>>().basePath('${basePath}')
+    const app = new Hono<HonoEnv, MergeSchemaPath<ActionSchema, \`${basePath}\`>>().basePath('${basePath}')
 
     app.use('*', cors(), logger(), prettyJSON())
 

@@ -10,7 +10,12 @@ import fs from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { glob } from 'tinyglobby'
-import { defineHonoAction, HonoActionError, type HonoEnv } from '../src/actions'
+import {
+    defineHonoAction,
+    HonoActionError,
+    type HonoEnv,
+    type MergeActionKeyIntoPath,
+} from '../src/actions'
 import {
     VIRTUAL_MODULE_ID_CLIENT,
     VIRTUAL_MODULE_ID_ROUTER,
@@ -42,8 +47,10 @@ const mockActions = {
     }),
 }
 
+type Actions = typeof mockActions
+
 type ActionsSchema = ExtractSchema<
-    (typeof mockActions)[keyof typeof mockActions]
+    MergeActionKeyIntoPath<Actions>[keyof MergeActionKeyIntoPath<Actions>]
 >
 
 describe('Integration Tests', () => {
@@ -173,11 +180,7 @@ describe('Integration Tests', () => {
             // Create a test app using the same pattern as generated router
             const app = new Hono<
                 HonoEnv,
-                MergeSchemaPath<
-                    ActionsSchema,
-                    '/api/testAction' | '/api/anotherAction'
-                >,
-                '/api'
+                MergeSchemaPath<ActionsSchema, '/api'>
             >().basePath('/api')
 
             app.use(logger(), prettyJSON())
@@ -216,11 +219,7 @@ describe('Integration Tests', () => {
         it('should handle multiple actions in the same router', async () => {
             const app = new Hono<
                 HonoEnv,
-                MergeSchemaPath<
-                    ActionsSchema,
-                    '/api/testAction' | '/api/anotherAction'
-                >,
-                '/api'
+                MergeSchemaPath<ActionsSchema, '/api'>
             >().basePath('/api')
 
             // Simulate the generated router pattern
@@ -247,11 +246,7 @@ describe('Integration Tests', () => {
         it('should handle validation errors in generated pattern', async () => {
             const app = new Hono<
                 HonoEnv,
-                MergeSchemaPath<
-                    ActionsSchema,
-                    '/api/testAction' | '/api/anotherAction'
-                >,
-                '/api'
+                MergeSchemaPath<ActionsSchema, '/api'>
             >().basePath('/api')
 
             const action = defineHonoAction({
