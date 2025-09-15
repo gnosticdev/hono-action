@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'astro/zod'
 import type { Context } from 'hono'
-import { createFactory } from 'hono/factory'
 import { HonoActionError } from './error.js'
+import { Hono } from 'hono/quick'
 
 export { HonoActionError } from './error.js'
 
@@ -65,8 +65,7 @@ export function defineHonoAction<
     TSchema extends HonoActionSchema,
     TReturn,
 >({ schema, handler }: HonoActionParams<TSchema, TReturn, TEnv>) {
-    const factory = createFactory<TEnv, '/'>()
-    const app = factory.createApp()
+    const app = new Hono<TEnv>()
 
     const route = app.post(
         '/',
