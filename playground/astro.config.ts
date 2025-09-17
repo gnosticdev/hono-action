@@ -8,6 +8,7 @@ const { default: honoActions } = await import('@gnosticdev/hono-actions')
 
 // https://astro.build/config
 export default defineConfig({
+    output: 'server',
     integrations: [
         honoActions(),
         hmrIntegration({

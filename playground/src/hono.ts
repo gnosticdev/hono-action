@@ -16,7 +16,8 @@ const anotherAction = defineHonoAction({
     schema: z.object({
         name2: z.string(),
     }),
-    handler: async (input) => {
+    handler: async (input, ctx) => {
+        console.log(ctx.env)
         return {
             message2: `Hello ${input.name2}!`,
         }

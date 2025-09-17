@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.1.2
+
+### Patch Changes
+
+- fix types for HonoRouter without path key
+
 ## 1.1.1
 
 ### Patch Changes

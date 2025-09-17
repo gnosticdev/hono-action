@@ -13,7 +13,7 @@ interface Env {
 
 type Runtime = import('@astrojs/cloudflare').Runtime<Env>
 declare namespace App {
-    interface Locals {
+    interface Locals extends Runtime {
         db: D1Database
     }
 }

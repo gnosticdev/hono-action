@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import * as v from 'valibot'
+import { z } from 'astro/zod'
 import { HonoActionError, type ActionErrorCode } from '../src/error'
 
 describe('HonoActionError', () => {
@@ -19,16 +19,16 @@ describe('HonoActionError', () => {
         })
 
         it('should create an error with validation issue', () => {
-            const schema = v.object({
-                email: v.string(),
-                age: v.number(),
+            const schema = z.object({
+                email: z.string(),
+                age: z.number(),
             })
 
-            const result = v.safeParse(schema, {
+            const result = schema.safeParse({
                 email: 'invalid',
                 age: 'not-a-number',
             })
-            const issue = result.issues?.[0]
+            const issue = result.error?.issues?.[0]
 
             const error = new HonoActionError({
                 message: 'Validation failed',
@@ -98,12 +98,12 @@ describe('HonoActionError', () => {
         })
 
         it('should include issue in serialization when present', () => {
-            const schema = v.object({
-                email: v.string(),
+            const schema = z.object({
+                email: z.string(),
             })
 
-            const result = v.safeParse(schema, { email: 123 })
-            const issue = result.issues?.[0]
+            const result = schema.safeParse({ email: 123 })
+            const issue = result.error?.issues?.[0]
 
             const error = new HonoActionError({
                 message: 'Validation failed',

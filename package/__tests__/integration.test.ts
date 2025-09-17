@@ -122,7 +122,7 @@ describe('Integration Tests', () => {
 
     describe('Generated Astro Handler Integration', () => {
         it('should generate valid cloudflare handler', () => {
-            const handlerContent = getAstroHandler('cloudflare')
+            const handlerContent = getAstroHandler('@astrojs/cloudflare')
 
             expect(handlerContent).toContain('APIRoute<APIContext>')
             expect(handlerContent).toContain('router.fetch')
@@ -369,7 +369,7 @@ describe('Integration Tests', () => {
                 relativeActionsPath: '../actions',
             })
             const clientContent = getHonoClient(3000)
-            const handlerContent = getAstroHandler('cloudflare')
+            const handlerContent = getAstroHandler('@astrojs/cloudflare')
 
             // All should reference the same router
             expect(routerContent).toContain('HonoRouter')

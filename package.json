@@ -1,4 +1,11 @@
 {
+  "name": "root",
+  "version": "1.0.7",
+  "repository": {
+    "directory": "package",
+    "type": "git",
+    "url": "https://github.com/gnosticdev/hono-actions"
+  },
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
     "@changesets/cli": "^2.29.6",
@@ -8,16 +15,10 @@
   "engines": {
     "node": ">=22.18.0"
   },
-  "name": "root",
   "packageManager": "bun@1.2.21",
   "private": true,
   "publishConfig": {
     "access": "restricted"
-  },
-  "repository": {
-    "directory": "package",
-    "type": "git",
-    "url": "https://github.com/gnosticdev/hono-actions"
   },
   "scripts": {
     "build:package": "bun run --cwd package build",
@@ -25,22 +26,21 @@
     "clean-install": "rm -rf node_modules bun.lock package/dist playground/dist && bun i --no-cache",
     "lint": "biome check .",
     "lint:fix": "biome check --write",
-    "package:dev": "bun run --cwd package dev",
-    "playground:dev": "bun run --cwd playground dev",
+    "dev:package": "bun run --cwd package dev",
+    "dev:playground": "bun run --cwd playground dev",
     "prepublish": "bun run --cwd package typecheck && bun run --cwd package build",
     "publish": "bun changeset && bun changeset version && bun changeset publish",
     "test": "bun test --cwd package",
     "typecheck": "bun --cwd package typecheck",
     "version": "bun changeset version"
   },
-  "version": "1.0.7",
+  "trustedDependencies": [
+    "@tailwindcss/oxide"
+  ],
   "workspaces": {
     "packages": [
       "package",
       "playground"
     ]
-  },
-  "dependencies": {
-    "@hono/zod-validator": "^0.7.2"
   }
 }
