@@ -6,9 +6,7 @@ import { honoClient, parseResponse } from '@gnosticdev/hono-actions/client'
 
 const { data: data } = await parseResponse(
     await honoClient.api.myAction.$post({
-        json: {
-            name: 'John'
-        }
+        json: { name: 'John' }
     })
 )
 

@@ -20,6 +20,16 @@ export default defineConfig({
     server: {
         port: 4322,
     },
+    env: {
+        schema: {
+            TEST_VAR: {
+                access: 'public',
+                context: 'server',
+                type: 'string',
+            },
+        },
+    },
+
     adapter: cloudflare(),
     vite: {
         server: {

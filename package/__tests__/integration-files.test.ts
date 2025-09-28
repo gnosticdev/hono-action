@@ -162,7 +162,7 @@ describe('Integration Files', () => {
                 "import { hc, parseResponse } from 'hono/client'",
             )
             expect(clientContent).toContain('function getBaseUrl()')
-            expect(clientContent).toContain('export { parseResponse }')
+            expect(clientContent).toContain('export { parseResponse, hc }')
             expect(clientContent).toContain(
                 'export const honoClient = hc<HonoRouter>(getBaseUrl())',
             )

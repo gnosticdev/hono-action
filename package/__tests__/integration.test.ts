@@ -262,6 +262,7 @@ describe('Integration Tests', () => {
 
             const res = await client.api.testAction.$post({
                 json: {
+                    // @ts-expect-error testing invalid input
                     email: 'invalid-email',
                     age: 15,
                 },

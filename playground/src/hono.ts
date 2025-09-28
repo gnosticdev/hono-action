@@ -17,9 +17,17 @@ const anotherAction = defineHonoAction({
         name2: z.string(),
     }),
     handler: async (input, ctx) => {
-        console.log(ctx.env)
+        console.log(ctx.env.TEST_VAR)
         return {
             message2: `Hello ${input.name2}!`,
+        }
+    },
+})
+
+const noSchemaAction = defineHonoAction({
+    handler: async (input) => {
+        return {
+            message: `Hello ${input.name}!`,
         }
     },
 })
@@ -27,4 +35,5 @@ const anotherAction = defineHonoAction({
 export const honoActions = {
     myAction,
     anotherAction,
+    noSchemaAction,
 }

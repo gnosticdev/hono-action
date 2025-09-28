@@ -22,7 +22,8 @@
   },
   "scripts": {
     "build:package": "bun run --cwd package build",
-    "build:playground": "bun run --cwd playground build",
+    "build:playground": "bun run --cwd playground build --force",
+    "build": "bun run --cwd package build && bun run --cwd playground build --force",
     "clean-install": "rm -rf node_modules bun.lock package/dist playground/dist && bun i --no-cache",
     "lint": "biome check .",
     "lint:fix": "biome check --write",
