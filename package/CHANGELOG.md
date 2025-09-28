@@ -1,5 +1,11 @@
 # @gnosticdev/hono-actions
 
+## 1.2.1
+
+### Patch Changes
+
+- update playground
+
 ## 1.2.0
 
 ### Minor Changes
