@@ -17,6 +17,7 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "ES2022",
+    "types": ["hono", "astro"],
     "verbatimModuleSyntax": true
   },
   "exclude": ["node_modules", "dist"]

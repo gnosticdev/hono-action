@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'astro/zod'
-import type { Context, Hono as HonoInstance } from 'hono'
-import { Hono } from 'hono/quick'
+import { Hono } from 'hono'
+import type { Context } from 'hono'
 import type { MergeSchemaPath } from 'hono/types'
 import { HonoActionError } from './error.js'
 
@@ -35,7 +35,7 @@ type HonoActionSchema = z.ZodTypeAny
  *
  * Example:
  * ```ts
- * declare const honoActions: {
+ * const honoActions: {
  *   myAction: Hono<HonoEnv, { '/': { $post: any } }, '/'>
  *   anotherAction: Hono<HonoEnv, { '/': { $post: any } }, '/'>
  * }
@@ -48,45 +48,42 @@ type HonoActionSchema = z.ZodTypeAny
  * ```
  */
 export type MergeActionKeyIntoPath<
-    TActions extends Record<string, HonoInstance<any, any, any>>,
+    TActions extends Record<string, Hono<any, any, any>>,
 > = {
-    [K in keyof TActions]: TActions[K] extends HonoInstance<
+    [K in keyof TActions]: TActions[K] extends Hono<
         infer TEnv,
         infer TSchema,
         infer TBase
     >
-        ? HonoInstance<
-              TEnv,
-              MergeSchemaPath<TSchema, `/${Extract<K, string>}`>,
-              TBase
-          >
+        ? Hono<TEnv, MergeSchemaPath<TSchema, `/${Extract<K, string>}`>, TBase>
         : never
 }
 
-interface HonoActionContext<
-    TEnv extends HonoEnv,
-    TSchema extends HonoActionSchema,
-> extends Context<
-        TEnv,
-        '/',
-        {
-            input: z.input<TSchema>
-            output: z.output<TSchema>
-            outputFormat: 'json'
-        }
-    > {
-    env: TEnv['Bindings']
-}
+// interface HonoActionContext<
+//     TEnv extends HonoEnv,
+//     TSchema extends HonoActionSchema,
+// > extends Context<
+//         TEnv,
+//         '/',
+//         {
+//             input: z.input<TSchema>
+//             output: z.output<TSchema>
+//             outputFormat: 'json'
+//         }
+//     > {
+//     env: TEnv['Bindings']
+// }
 
 type HonoActionParams<
     TSchema extends HonoActionSchema,
     TReturn,
-    TEnv extends HonoEnv = HonoEnv,
+    TEnv extends HonoEnv,
+    TContext extends Context<TEnv, any, any>,
 > = {
     schema?: TSchema
     handler: (
         params: z.output<TSchema>,
-        context: HonoActionContext<TEnv, TSchema>,
+        context: TContext extends infer Ctx ? Ctx : never,
     ) => Promise<TReturn>
 }
 
@@ -101,7 +98,8 @@ export function defineHonoAction<
     TEnv extends HonoEnv,
     TSchema extends HonoActionSchema,
     TReturn,
->({ schema, handler }: HonoActionParams<TSchema, TReturn, TEnv>) {
+    TContext extends Context<TEnv, any, any>,
+>({ schema, handler }: HonoActionParams<TSchema, TReturn, TEnv, TContext>) {
     const app = new Hono<TEnv>()
 
     const route = app.post(
@@ -130,7 +128,7 @@ export function defineHonoAction<
                 // context is validated after the middleware, but we only need the original definition to be passed back in to the handler here.
                 const result = await handler(
                     json,
-                    c as unknown as HonoActionContext<TEnv, TSchema>,
+                    c as TContext extends infer Ctx ? Ctx : never,
                 )
 
                 return c.json(

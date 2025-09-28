@@ -2,6 +2,7 @@ import { z } from 'astro/zod'
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
+import { HonoBase } from 'hono/hono-base'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
 import { testClient } from 'hono/testing'
@@ -26,34 +27,75 @@ import {
     generateRouter,
 } from '../src/integration-files'
 
-// Mock the generated router for testing
-const mockActions = {
-    testAction: defineHonoAction({
-        schema: z.object({
-            name: z.string(),
-            age: z.number(),
-        }),
-        handler: async (input) => ({
-            message: `Hello ${input.name}, you are ${input.age} years old`,
-        }),
-    }),
-    anotherAction: defineHonoAction({
-        schema: z.object({
-            value: z.string(),
-        }),
-        handler: async (input) => ({
-            result: `Processed: ${input.value}`,
-        }),
-    }),
-}
-
-type Actions = typeof mockActions
-
-type ActionsSchema = ExtractSchema<
-    MergeActionKeyIntoPath<Actions>[keyof MergeActionKeyIntoPath<Actions>]
->
-
 describe('Integration Tests', () => {
+    // Mock the generated router for testing
+    const mockActions = {
+        testAction: defineHonoAction({
+            schema: z.object({
+                name: z.string(),
+                age: z.number(),
+            }),
+            handler: async (input) => ({
+                message: `Hello ${input.name}, you are ${input.age} years old`,
+            }),
+        }),
+        anotherAction: defineHonoAction({
+            schema: z.object({
+                value: z.string(),
+            }),
+            handler: async (input) => ({
+                result: `Processed: ${input.value}`,
+            }),
+        }),
+    } as const
+
+    type MergedActions = MergeActionKeyIntoPath<typeof mockActions>
+    type ActionsSchema = ExtractSchema<MergedActions[keyof MergedActions]>
+
+    const defaultApp = new Hono<
+        HonoEnv,
+        MergeSchemaPath<ActionsSchema, '/api'>
+    >().basePath('/api')
+    defaultApp.use('*', logger(), prettyJSON())
+    for (const [routeName, action] of Object.entries(mockActions)) {
+        defaultApp.route(`/${routeName}`, action)
+    }
+
+    describe('Default App', () => {
+        it('should be a valid Hono app', () => {
+            expect(defaultApp).toBeInstanceOf(HonoBase)
+            expect(defaultApp.routes).toBeArray()
+        })
+        it('should have the correct routes', () => {
+            expect(
+                defaultApp.getPath(
+                    new Request('http://localhost/api/testAction'),
+                ),
+            ).toBe('/api/testAction')
+            expect(
+                defaultApp.getPath(
+                    new Request('http://localhost/api/anotherAction'),
+                ),
+            ).toBe('/api/anotherAction')
+        })
+        it('should have the correct handler', () => {
+            expect(defaultApp.routes).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        path: '/api/testAction',
+                        method: 'POST',
+                        handler: expect.any(Function),
+                    }),
+                    expect.objectContaining({
+                        path: '/api/anotherAction',
+                        method: 'POST',
+                        handler: expect.any(Function),
+                    }),
+                ]),
+            )
+        })
+    })
+
     describe('Generated Router Integration', () => {
         it('should generate valid router code', () => {
             const routerContent = generateRouter({
@@ -239,6 +281,54 @@ describe('Integration Tests', () => {
                 json: { value: 'test' },
             })
             expect(res2.status).toBe(200)
+        })
+    })
+
+    describe('Custom Hono instances (non-defineHonoAction)', () => {
+        it('should not accept POST on a GET-only custom Hono route when mixed into honoActions', async () => {
+            // Create a standalone Hono instance with ONLY a GET route
+            const getOnlyApp = new Hono()
+            const getOnlyRoute = getOnlyApp.get('/', (c) =>
+                c.json({ ok: true }),
+            )
+
+            // Mix this custom instance into the actions collection, simulating user configuration
+            const modifiedActions = {
+                getOnly: getOnlyRoute,
+                ...mockActions,
+            }
+
+            type AdditionalActions = MergeActionKeyIntoPath<
+                typeof modifiedActions
+            >
+
+            // Build an app using the same pattern as the generated router
+            const app = new Hono<
+                HonoEnv,
+                MergeSchemaPath<
+                    ExtractSchema<AdditionalActions[keyof AdditionalActions]>,
+                    '/api'
+                >
+            >().basePath('/api')
+            for (const [routeName, action] of Object.entries(modifiedActions)) {
+                app.route(`/${routeName}`, action as any)
+            }
+
+            // Sending POST to GET-only route should not be allowed (no POST route exists)
+            const resPost = await app.request('/api/getOnly', {
+                method: 'POST',
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({}),
+            })
+            expect(resPost.status).toBe(404)
+
+            // GET should succeed on the same route
+            const resGet = await app.request('/api/getOnly', {
+                method: 'GET',
+            })
+            expect(resGet.status).toBe(200)
+            const json = await resGet.json()
+            expect(json.ok).toBe(true)
         })
     })
 
