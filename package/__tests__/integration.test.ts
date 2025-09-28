@@ -21,9 +21,9 @@ import {
     VIRTUAL_MODULE_ID_ROUTER,
 } from '../src/integration'
 import {
+    generateAstroHandler,
+    generateHonoClient,
     generateRouter,
-    getAstroHandler,
-    getHonoClient,
 } from '../src/integration-files'
 
 // Mock the generated router for testing
@@ -93,7 +93,7 @@ describe('Integration Tests', () => {
 
     describe('Generated Client Integration', () => {
         it('should generate valid client code', () => {
-            const clientContent = getHonoClient(3000)
+            const clientContent = generateHonoClient(3000)
 
             expect(clientContent).toContain('hc<HonoRouter>')
             expect(clientContent).toContain('getBaseUrl')
@@ -101,7 +101,7 @@ describe('Integration Tests', () => {
         })
 
         it('should handle different environments correctly', () => {
-            const clientContent = getHonoClient(3000)
+            const clientContent = generateHonoClient(3000)
 
             // Should include client-side detection
             expect(clientContent).toContain("typeof window !== 'undefined'")
@@ -114,7 +114,7 @@ describe('Integration Tests', () => {
         })
 
         it('should use custom site URL when provided', () => {
-            const clientContent = getHonoClient(3000)
+            const clientContent = generateHonoClient(3000)
 
             expect(clientContent).toContain("return import.meta.env.SITE ?? ''")
         })
@@ -122,7 +122,7 @@ describe('Integration Tests', () => {
 
     describe('Generated Astro Handler Integration', () => {
         it('should generate valid cloudflare handler', () => {
-            const handlerContent = getAstroHandler('@astrojs/cloudflare')
+            const handlerContent = generateAstroHandler('@astrojs/cloudflare')
 
             expect(handlerContent).toContain('APIRoute<APIContext>')
             expect(handlerContent).toContain('router.fetch')
@@ -131,7 +131,7 @@ describe('Integration Tests', () => {
         })
 
         it('should include proper error handling for unsupported adapters', () => {
-            expect(() => getAstroHandler('unsupported' as any)).toThrow(
+            expect(() => generateAstroHandler('unsupported' as any)).toThrow(
                 'Unsupported adapter: unsupported',
             )
         })
@@ -368,8 +368,8 @@ describe('Integration Tests', () => {
                 basePath: '/api',
                 relativeActionsPath: '../actions',
             })
-            const clientContent = getHonoClient(3000)
-            const handlerContent = getAstroHandler('@astrojs/cloudflare')
+            const clientContent = generateHonoClient(3000)
+            const handlerContent = generateAstroHandler('@astrojs/cloudflare')
 
             // All should reference the same router
             expect(routerContent).toContain('HonoRouter')
