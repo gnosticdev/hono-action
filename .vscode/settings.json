@@ -1,4 +1,7 @@
 {
   "editor.defaultFormatter": "biomejs.biome",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "bun.test.enable": false,
+  "vitest.shellType": "terminal",
+  "vitest.workspaceConfig": "vitest.config.ts"
 }

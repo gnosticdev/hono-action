@@ -24,7 +24,7 @@
     "build:package": "bun run --cwd package build",
     "build:playground": "bun run --cwd playground build --force",
     "build": "bun run --cwd package build && bun run --cwd playground build --force",
-    "clean-install": "rm -rf node_modules bun.lock package/dist playground/dist && bun i --no-cache",
+    "clean-install": "rm -rf node_modules bun.lock package/dist package/node_modules playground/dist playground/node_modules && bun i --no-cache && bun run build",
     "lint": "biome check .",
     "lint:fix": "biome check --write",
     "dev:package": "bun run --cwd package dev",
@@ -36,9 +36,17 @@
     "version": "bun changeset version"
   },
   "trustedDependencies": [
-    "@tailwindcss/oxide"
+    "@tailwindcss/oxide",
+    "esbuild",
+    "sharp",
+    "workerd"
   ],
   "workspaces": {
+    "catalog": {
+      "vitest": "^3.2.4",
+      "hono": "^4.9.9",
+      "astro": "^5.14.1"
+    },
     "packages": [
       "package",
       "playground"

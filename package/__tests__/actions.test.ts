@@ -1,5 +1,5 @@
 import { z } from 'astro/zod'
-import { beforeEach, describe, expect, it, jest } from 'bun:test'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
 import { createFactory } from 'hono/factory'
@@ -198,8 +198,8 @@ describe('Environment Bindings', () => {
             SOME_API_KEY: 'test-key',
             ASTRO_LOCALS: {
                 kv: {
-                    getItem: jest.fn().mockResolvedValue({ some: 'data' }),
-                    setItem: jest.fn().mockResolvedValue(undefined),
+                    getItem: vi.fn().mockResolvedValue({ some: 'data' }),
+                    setItem: vi.fn().mockResolvedValue(undefined),
                 },
                 sessionId: 'test-session',
             },

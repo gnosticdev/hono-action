@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "noUncheckedIndexedAccess": false,
-    "types": ["hono", "bun"]
+    "types": ["hono", "vitest"]
   },
   "include": ["**/*.ts"],
   "extends": "../tsconfig.json"

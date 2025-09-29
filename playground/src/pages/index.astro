@@ -10,6 +10,10 @@ const { data: data } = await parseResponse(
     })
 )
 
+const { message: getDataMessage } = await parseResponse(
+    await honoClient.api.getRoute.$get()
+)
+
 const { data: data2 } = await parseResponse(
     await honoClient.api.anotherAction.$post({
         json: { name2: 'Jane' }
@@ -48,6 +52,11 @@ const { data: data2 } = await parseResponse(
             </defs>
         </svg>
         <h1>{data.message} and {data2.message2}</h1>
+        <ul>
+            <li>/api/getRoute: {getDataMessage}</li>
+            <li>/api/myAction: {data.message}</li>
+            <li>/api/anotherAction: {data2.message2}</li>
+        </ul>
         <p class='instructions'>
             To get started, open the directory <code>src/pages</code> in your project.<br
             />

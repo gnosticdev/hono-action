@@ -1,5 +1,5 @@
 import { z } from 'astro/zod'
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { Hono } from 'hono'
 import { showRoutes } from 'hono/dev'
 import { HonoBase } from 'hono/hono-base'
@@ -64,7 +64,7 @@ describe('Integration Tests', () => {
     describe('Default App', () => {
         it('should be a valid Hono app', () => {
             expect(defaultApp).toBeInstanceOf(HonoBase)
-            expect(defaultApp.routes).toBeArray()
+            expect(defaultApp.routes).toBeInstanceOf(Array)
         })
         it('should have the correct routes', () => {
             expect(
@@ -357,7 +357,6 @@ describe('Integration Tests', () => {
                 },
             })
 
-            // @ts-expect-error Hono doesnt infer the status code of validation errors
             expect(res.status).toBe(400)
             const json = await res.json()
             expect(json.data).toBeNull()
