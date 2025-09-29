@@ -17,7 +17,6 @@ export default getViteConfig({
                             import.meta.url,
                             'package/src/actions.ts',
                         ),
-                        '@/*': path.resolve(import.meta.url, 'package/src/'),
                     },
                 },
             },

@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'astro/zod'
-import { Hono } from 'hono'
 import type { Context } from 'hono'
+import { Hono } from 'hono'
 import type { MergeSchemaPath } from 'hono/types'
 import { HonoActionError } from './error.js'
 
@@ -58,21 +58,6 @@ export type MergeActionKeyIntoPath<
         ? Hono<TEnv, MergeSchemaPath<TSchema, `/${Extract<K, string>}`>, TBase>
         : never
 }
-
-// interface HonoActionContext<
-//     TEnv extends HonoEnv,
-//     TSchema extends HonoActionSchema,
-// > extends Context<
-//         TEnv,
-//         '/',
-//         {
-//             input: z.input<TSchema>
-//             output: z.output<TSchema>
-//             outputFormat: 'json'
-//         }
-//     > {
-//     env: TEnv['Bindings']
-// }
 
 type HonoActionParams<
     TSchema extends HonoActionSchema,

@@ -18,7 +18,6 @@ describe('Astro Integration', async () => {
             'integrations',
             '_gnosticdev_hono-actions',
         )
-        console.log('tmpDir', tmpDir)
     })
 
     afterEach(() => {
@@ -26,11 +25,10 @@ describe('Astro Integration', async () => {
         console.log('tmpDir removed', tmpDir)
     })
 
-    it('generates router, client and injects route/types', async () => {
+    it('[astro sync] generates router, client and injects route/types', async () => {
         const { default: integration } = await import('../src/integration')
         const { default: cloudflare } = await import('@astrojs/cloudflare')
         const { sync } = await import('../../node_modules/astro')
-        vi.dynamicImportSettled()
         const spy = vi.fn(integration)
 
         await sync({

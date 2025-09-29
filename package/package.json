@@ -1,6 +1,5 @@
 {
   "author": {
-    "email": "nynxaconsulting@gmail.com",
     "name": "gnosticdev",
     "url": "https://github.com/gnosticdev"
   },
@@ -12,7 +11,7 @@
   "description": "Define server actions with built-in validation, error handling, and a pre-built hono client for calling the routes.",
   "devDependencies": {
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
+    "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "exports": {
